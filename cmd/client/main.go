@@ -23,24 +23,20 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	go func() {
-		for {
-			reader := bufio.NewReader(os.Stdin)
-			fmt.Print("Enter text: ")
-			text, _ := reader.ReadString('\n')
-			text = strings.TrimSuffix(text, "\n")
+	for {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter text: ")
+		text, _ := reader.ReadString('\n')
+		text = strings.TrimSuffix(text, "\n")
 
-			err := client.SendMsg(text)
-			if err != nil {
-				log.Fatalln(err)
-			}
-
-			msg := make(chan string)
-			go client.HandleIncomingMsg(msg)
-			m := <-msg
-			fmt.Println("received message:", m)
+		err := client.SendMsg(text)
+		if err != nil {
+			log.Fatalln(err)
 		}
-	}()
 
-	select {}
+		msg := make(chan string)
+		go client.HandleIncomingMsg(msg)
+		m := <-msg
+		fmt.Println("received message:", m)
+	}
 }
